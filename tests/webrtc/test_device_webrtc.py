@@ -7,7 +7,10 @@ import json
 import subprocess
 import sys
 import time
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10, which the SDK supports, has no tomllib: `tomli` is the same thing
+    import tomli as tomllib
 from pathlib import Path
 
 import pytest

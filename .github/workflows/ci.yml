@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install the SDK with its extras (numpy is only for the tests of the camera code)
-        run: pip install -e ".[gpio]" pytest numpy
+      - name: Install the SDK with its extras (the rest is only for the tests: numpy and Pillow for the camera code, tomli for Python 3.10)
+        run: pip install -e ".[gpio]" pytest numpy pillow "tomli; python_version < '3.11'"
       - name: Run the tests
         run: python -m pytest tests -q
