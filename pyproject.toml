@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thepihub"
+version = "0.1.0"
+description = "The ThePiHub device SDK: connect a Raspberry Pi to a web dashboard"
+authors = [{ name = "ThePiHub" }]
+readme = { file = "sdk/pihub/README.md", content-type = "text/markdown" }
+keywords = ["raspberry-pi", "iot", "dashboard", "gpio", "webrtc"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Home Automation",
+    "Topic :: System :: Hardware",
+]
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+dependencies = [
+    "websocket-client>=1.9",
+    # Direct browser-to-device connections, live video and the Camera widget (aiortc brings PyAV). Part of the plain install, so nobody has to
+    # know to ask for it. Only where PyAV has pip wheels (the allow-list below): on a 32-bit Raspberry Pi pip cannot build it, so the dependency is
+    # skipped there and the apt packages are the route (python3-aiortc python3-av, in a virtualenv made with --system-site-packages). The device
+    # says so at run time if the library is missing.
+    'aiortc>=1.9; platform_machine == "x86_64" or platform_machine == "AMD64" or platform_machine == "aarch64" or platform_machine == "arm64"',
+]
+
+[project.optional-dependencies]
+# Kept so `pip install "thepihub[webrtc]"` (in older docs, hints and posts) still works: it is now the same as the plain install.
+webrtc = ['aiortc>=1.9; platform_machine == "x86_64" or platform_machine == "AMD64" or platform_machine == "aarch64" or platform_machine == "arm64"']
+# Sensors, LEDs and buttons on the GPIO pins (apps/motion_trap.py). Raspberry Pi OS already has it for its own Python;
+# its mock pins let the apps run, and be tested, on any machine.
+gpio = ["gpiozero>=2.0"]
+
+[project.urls]
+Homepage = "https://thepihub.com"
+
+[project.scripts]
+pihub = "pihub.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["sdk"]
